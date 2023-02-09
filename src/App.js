@@ -1,61 +1,63 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { firstAxiosInstance, secondAxiosInstance } from "./axios-test";
-import { useSearchParams } from "react-router-dom";
 
-const TestApp = () => {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
+const App = () => {
+  const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
-  const [searchParams] = useSearchParams();
-  const id = searchParams.get("id");
-  const session_id = searchParams.get("session_id");
-
-  const getDataHandler = async () => {
-    setLoading(true);
-    try {
-      const response = await firstAxiosInstance.get("");
-      setData(response.data);
-    } catch (error) {
-      setError(error);
-    }
-
-    setLoading(false);
-  };
-
-  const postDataHandler = async () => {
-    setLoading(true);
-    try {
-      const response = await firstAxiosInstance.post("", {
-        session_id: "un6beoydda13mcno4kv8lsady27motnz",
-      });
-      setData(response.data);
-
-      const response2 = await secondAxiosInstance.post("", {
-        session_id: "un6beoydda13mcno4kv8lsady27motnz",
-      });
-      setData(response2.data);
-    } catch (error) {
-      setError(error);
-    }
-
-    setLoading(false);
-  };
 
   useEffect(() => {
-    getDataHandler();
-  }, []);
+    const handleSubmit = async () => {
+      // event.preventDefault();
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
-  if (!data) return <p>No Data</p>;
+      setLoading(true);
+
+      try {
+        const getData = await firstAxiosInstance.get("");
+        console.log(getData);
+      } catch (error) {
+        console.error(error);
+      }
+
+      try {
+        const response = await firstAxiosInstance.post("", {
+          message: "its working",
+        });
+
+        console.log(response.data);
+
+        const url = new URL(response.request.responseURL);
+        const sessionId = url.searchParams.get("session_id");
+
+        console.log(sessionId);
+        if (sessionId) {
+          setData({
+            sessionId,
+            responseData: response.data,
+          });
+        } else {
+          throw new Error("Session ID not found in URL");
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    handleSubmit();
+  }, []);
 
   return (
     <div>
-      <h1>Test App</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-      <button onClick={postDataHandler}>Post Data</button>
+      {loading && <p>Loading...</p>}
+      {data.sessionId && (
+        <div>
+          <p>Session ID: {data.sessionId}</p>
+          <p>Response data: {JSON.stringify(data.responseData)}</p>
+        </div>
+      )}
     </div>
   );
 };
 
-export default TestApp;
+export default App;

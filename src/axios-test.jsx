@@ -1,14 +1,37 @@
 import axios from "axios";
 
 const firstAxiosInstance = axios.create({
-  baseURL: "https://100014.pythonanywhere.com/api/userinfo/",
+  baseURL:
+    "https://100014.pythonanywhere.com/api/userinfo/un6beoydda13mcno4kv8lsady27motnz",
 });
 
 const secondAxiosInstance = axios.create({
-  baseURL: "https://100093.pythonanywhere.com/api/userinfo/",
+  baseURL:
+    "https://100093.pythonanywhere.com/api/userinfo/un6beoydda13mcno4kv8lsady27motnz",
 });
 
 export { firstAxiosInstance, secondAxiosInstance };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // import React, { useState, useEffect } from "react";
 // import { useLocation } from "react-router-dom";
